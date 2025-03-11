@@ -1,0 +1,153 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// 1. oписание структуры
+struct Node {
+    string film;        //название фильма
+    int premiere;    //дата премьеры
+    double rating;      //рейтинг
+    Node* next;         //указываем на следующий элемент с помощью next
+};
+
+//head указывает на 1 элемет списка и равен nullptr тк сначала список пуст
+Node* head = nullptr;
+
+//2.1 добавление фильма в начало списка
+void addToStart(string film, int premiere, double rating) {
+    Node* newNode = new Node; //создаем новый элемент списка
+    newNode->film = film;
+    newNode->premiere = premiere;
+    newNode->rating = rating;
+    newNode->next = head; //новый элемент соединяем с предыдущим
+    head = newNode; //новый элемент ставим первым
+}
+
+//2.2 добавление фильма в конец списка
+void addToEnd(string film, int premiere, double rating) {
+    Node* newNode = new Node; //создаем новый элемент списка
+    newNode->film = film;
+    newNode->premiere = premiere;
+    newNode->rating = rating;
+    newNode->next = nullptr; 
+
+    if (head == nullptr) { //если список пустой то этот элемент становится первым
+        head = newNode;
+        return;
+    }
+
+    Node* temp = head;
+    while (temp->next != nullptr) { //если не пустой то ищем последний элемент
+        temp = temp->next;
+    }
+    temp->next = newNode; //и соединяем этот элемент с предыдущим
+}
+
+//2.3 добавление фильма после заданного элемента
+void addAfter(string afterFilm, string film, int premiere, double rating) {
+    Node* temp = head;
+    while (temp != nullptr && temp->film != afterFilm) { //ищем нужный элемент
+        temp = temp->next;
+    }
+
+    if (temp != nullptr) { //если нашли, вставляем после него новый
+        Node* newNode = new Node;
+        newNode->film = film;
+        newNode->premiere = premiere;
+        newNode->rating = rating;
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+    else { //если не нашли выводим сообщение
+        cout << "Film with name '" << afterFilm << "' was not found" << endl;
+    }
+}
+
+//2.4 добавление фильма перед заданным элементом
+void addBefore(string beforeFilm, string film, int premiere, double rating) {
+    if (head == nullptr) return;
+
+    if (head->film == beforeFilm) { //если элемент стоит первым, добавляем в начало
+        addToStart(film, premiere, rating);
+        return;
+    }
+
+    Node* temp = head;
+    while (temp->next != nullptr && temp->next->film != beforeFilm) {
+        temp = temp->next;
+    }
+
+    if (temp->next != nullptr) {
+        Node* newNode = new Node;
+        newNode->film = film;
+        newNode->premiere = premiere;
+        newNode->rating = rating;
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+    else {
+        cout << "Film with name '" << beforeFilm << "' was not found" << endl;
+    }
+}
+
+//2.5 удаление фильма по названию
+void removeByTitle(string film) {
+    if (head == nullptr) return;
+
+    if (head->film == film) { //если он первый, то переносим head на сдедующий элемент и удаляем этот
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        return;
+    }
+
+    Node* temp = head;
+    while (temp->next != nullptr && temp->next->film != film) { //ищем элемент перед тем который хотим удалить
+        temp = temp->next;
+    }
+
+    if (temp->next != nullptr) { //если нашли, удаляем 
+        Node* toDelete = temp->next;
+        temp->next = toDelete->next;
+        delete toDelete;
+    }
+    else { //если не нашли, выводим сообщение
+        cout << "Фильм с названием '" << film << "' не найден!" << endl;
+    }
+}
+
+//2.6 вывод всех фильмов в списке на экран
+void printList() {
+    Node* temp = head;
+    while (temp != nullptr) {
+        cout << "Film: " << temp->film << ", Date of premiere: " << temp->premiere << ", Rating: " << temp->rating << endl;
+        temp = temp->next;
+    }
+}
+
+//2.7 функция main
+int main() {
+    //добавляем фильмы в список
+    addToEnd("Inception", 2010, 8.8);
+    addToStart("The Matrix", 1999, 8.7);
+    addToEnd("Interstellar", 2014, 8.6);
+
+    cout << "The list of films:" << endl;
+    printList();
+
+    //вставка после и перед определенными фильмами
+    addAfter("Inception", "The Dark Knight", 2008, 9.0);
+    addBefore("Interstellar", "Avatar", 2009, 7.8);
+
+    cout << "\nList of films after inserts before and after:" << endl;
+    printList();
+
+    //удаление фильма
+    removeByTitle("Inception");
+
+    cout << "\nList of films after 'Inception' was deleted:" << endl;
+    printList();
+
+    return 0;
+}
