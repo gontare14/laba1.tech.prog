@@ -1,0 +1,130 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+class Animal {
+protected:
+    std::string name;
+    int age;
+
+public:
+    Animal(std::string n, int a) : name(n), age(a) {}
+
+    virtual void showInfo() const {
+        std::cout << "Имя: " << name << ", Возраст: " << age << " лет." << std::endl;
+    }
+
+    virtual void makeSound() const = 0;
+    virtual void move() const = 0;
+
+    virtual void eat() const {
+        std::cout << name << " кушает." << std::endl;
+    }
+
+    virtual void sleep() const {
+        std::cout << name << " спит." << std::endl;
+    }
+
+    virtual ~Animal() {}
+};
+
+class Giraffe : public Animal {
+public:
+    Giraffe(std::string n, int a) : Animal(n, a) {}
+
+    void uniqueAction() const {
+        std::cout << name << " тянется к самым высоким веткам дерева, чтобы исследовать новые листья." << std::endl;
+    }
+
+    void makeSound() const override {
+        std::cout << name << " издает звук: " << "Гр-р-р!" << std::endl;
+    }
+
+    void move() const override {
+        std::cout << name << " медленно идет по саванне, используя свои длинные ноги." << std::endl;
+    }
+
+    void eat() const override {
+        std::cout << name << " ест листья с высоких деревьев." << std::endl;
+    }
+
+    void sleep() const override {
+        std::cout << name << " стоит и отдыхает, но не ложится спать." << std::endl;
+    }
+};
+
+class Elephant : public Animal {
+public:
+    Elephant(std::string n, int a) : Animal(n, a) {}
+
+    void uniqueAction() const {
+        std::cout << name << " обрызгивает себя водой из хобота, чтобы охладиться." << std::endl;
+    }
+
+    void makeSound() const override {
+        std::cout << name << " издает звук: " << "Трубит хоботом!" << std::endl;
+    }
+
+    void move() const override {
+        std::cout << name << " двигается медленно, но уверенно." << std::endl;
+    }
+
+    void eat() const override {
+        std::cout << name << " ест траву и кору с деревьев." << std::endl;
+    }
+
+    void sleep() const override {
+        std::cout << name << " ложится на землю, чтобы поспать." << std::endl;
+    }
+};
+
+class Lion : public Animal {
+public:
+    Lion(std::string n, int a) : Animal(n, a) {}
+
+    void uniqueAction() const {
+        std::cout << name << " роет землю лапами, помечая свою территорию." << std::endl;
+    }
+
+    void makeSound() const override {
+        std::cout << name << " рычит громко: " << "Р-р-р-р!" << std::endl;
+    }
+
+    void move() const override {
+        std::cout << name << " тихо крадется по траве, готовясь к атаке." << std::endl;
+    }
+
+    void eat() const override {
+        std::cout << name << " охотится и ест мясо." << std::endl;
+    }
+
+    void sleep() const override {
+        std::cout << name << " спит на солнце, отдыхая после охоты." << std::endl;
+    }
+};
+
+int main() {
+    Giraffe giraffe("Жираф", 5);
+    Elephant elephant("Слон", 10);
+    Lion lion("Лев", 7);
+
+    std::vector<Animal*> animals = {&giraffe, &elephant, &lion};
+
+    for (const auto& animal : animals) {
+        animal->showInfo();
+        animal->makeSound();
+        animal->move();
+        animal->eat();
+        animal->sleep();
+        if (auto* giraffePtr = dynamic_cast<Giraffe*>(animal)) {
+            giraffePtr->uniqueAction();
+        } else if (auto* elephantPtr = dynamic_cast<Elephant*>(animal)) {
+            elephantPtr->uniqueAction();
+        } else if (auto* lionPtr = dynamic_cast<Lion*>(animal)) {
+            lionPtr->uniqueAction();
+        }
+        std::cout << std::endl;
+    }
+
+    return 0;
+}
